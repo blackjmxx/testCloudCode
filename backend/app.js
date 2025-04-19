@@ -79,12 +79,14 @@ wsForMonaco.on("connection", (ws, req) => {
 });
 
 wsForShell.on("connection", (ws, req, container) => {
-  handleShellCreation(container, ws);
+  // Dans la version Kubernetes, container est un objet qui contient les infos du pod
   ws.on("close", () => {
-    container.remove({ force: true }, (err, data) => {
-      if (err) console.log(err);
-      else console.log(`Killed container ${container.id} with no error`);
-    });
+    // Utiliser la méthode remove définie dans handleContainerCreate pour nettoyer les ressources
+    if (container && container.remove) {
+      container.remove().catch(err => {
+        console.error(`Error removing container resources: ${err}`);
+      });
+    }
   });
 });
 
@@ -97,6 +99,9 @@ server.on("upgrade", (req, socket, head) => {
     });
   } else {
     const { playgroundId } = querystring.parse(req.url.split("?")[1]);
+    // handleContainerCreate gère maintenant la création d'un pod Kubernetes
     handleContainerCreate(playgroundId, wsForShell, req, socket, head);
   }
 });
+
+module.exports = app;

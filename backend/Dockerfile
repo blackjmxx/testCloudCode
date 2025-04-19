@@ -1,8 +1,22 @@
-FROM ubuntu:20.04
-RUN useradd -ms /bin/bash codefiddle
-WORKDIR /home/codefiddle/
-RUN apt update && apt upgrade -y
-RUN apt install curl nano -y
-RUN curl -fsSL https://deb.nodesource.com/setup_19.x | bash - && apt install -y nodejs
-RUN echo "PS1='\w '">>/home/codefiddle/.bashrc
-WORKDIR /home/codefiddle/code
+# Dockerfile pour le backend de CodeFiddle
+FROM node:18-slim
+
+WORKDIR /app
+
+# Copier package.json et package-lock.json
+COPY backend/package*.json ./
+
+# Installer les dépendances
+RUN npm install
+
+# Copier le code source du backend
+COPY backend/ ./
+
+# Créer le répertoire playgrounds
+RUN mkdir -p playgrounds
+
+# Exposer le port sur lequel l'application va écouter
+EXPOSE 3000
+
+# Commande pour démarrer l'application
+CMD ["node", "app.js"]

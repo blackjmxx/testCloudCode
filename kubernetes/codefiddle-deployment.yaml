@@ -1,0 +1,90 @@
+# kubernetes/codefiddle-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codefiddle-backend
+  labels:
+    app: codefiddle-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: codefiddle-backend
+  template:
+    metadata:
+      labels:
+        app: codefiddle-backend
+    spec:
+      containers:
+      - name: codefiddle-backend
+        image: codefiddle-backend:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: playgrounds-volume
+          mountPath: /app/playgrounds
+        # Monter la configuration Kubernetes pour permettre à l'application d'interagir avec l'API
+        - name: kube-config
+          mountPath: /app/.kube
+          readOnly: true
+      volumes:
+      - name: playgrounds-volume
+        persistentVolumeClaim:
+          claimName: codefiddle-playgrounds-pvc
+      - name: kube-config
+        secret:
+          secretName: kube-config-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: codefiddle-backend-service
+spec:
+  selector:
+    app: codefiddle-backend
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: codefiddle-playgrounds-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: codefiddle-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: codefiddle.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: codefiddle-backend-service
+            port:
+              number: 80
+  # Cette règle générique permet de gérer tous les sous-domaines
+  - host: "*.codefiddle.local"
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: codefiddle-backend-service
+            port:
+              number: 80
