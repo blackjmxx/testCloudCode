@@ -1,0 +1,31 @@
+# Créer le fichier Dockerfile.playground
+cat > Dockerfile.playground << 'EOF'
+# Dockerfile pour l'image de base de CodeFiddle (pour les playgrounds)
+FROM ubuntu:22.04
+
+# Créer un utilisateur non-root pour une meilleure sécurité
+RUN useradd -ms /bin/bash codefiddle
+WORKDIR /home/codefiddle/
+
+# Mise à jour et installation des dépendances
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install -y curl nano git build-essential
+
+# Installation de Node.js 18
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs
+
+# Personnalisation de l'invite de commande
+RUN echo "PS1='\w '">>/home/codefiddle/.bashrc
+
+# Créer le répertoire de code
+WORKDIR /home/codefiddle/code
+
+# Configuration par défaut pour vite
+RUN echo '{ "server": { "host": "0.0.0.0" } }' > /home/codefiddle/code/vite.config.js
+
+# Exposer le port pour l'application Vite
+EXPOSE 5173
+
+# Commande par défaut (peut être écrasée)
+CMD ["bash"]
+EOF
