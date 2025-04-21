@@ -1,14 +1,14 @@
 # Dépendances
-backend/node_modules
-backend/.pnp
-backend/.pnp.js
-backend/.yarn/install-state.gz
+sandbox-service-react/node_modules
+sandbox-service-react/.pnp
+sandbox-service-react/.pnp.js
+sandbox-service-react/.yarn/install-state.gz
 # Tests
-backend/coverage
+sandbox-service-react/coverage
 
 # Production
-backend/build
-backend/dist
+sandbox-service-react/build
+sandbox-service-react/dist
 
 # Environnement
 .env
@@ -18,22 +18,22 @@ backend/dist
 .env.production.local
 
 # Logs
-backend/logs
-backend/*.log
-backend/npm-debug.log*
-backend/yarn-debug.log*
-backend/yarn-error.log*
-backend/pnpm-debug.log*
-backend/lerna-debug.log*
+sandbox-service-react/logs
+sandbox-service-react/*.log
+sandbox-service-react/npm-debug.log*
+sandbox-service-react/yarn-debug.log*
+sandbox-service-react/yarn-error.log*
+sandbox-service-react/pnpm-debug.log*
+sandbox-service-react/lerna-debug.log*
 
 # Système d'exploitation
-backend/.DS_Store
-backend/Thumbs.db
-backend/*.suo
-backend/*.ntvs*
-backend/*.njsproj
-backend/*.sln
-backend/*.sw?
+sandbox-service-react/.DS_Store
+sandbox-service-react/Thumbs.db
+sandbox-service-react/*.suo
+sandbox-service-react/*.ntvs*
+sandbox-service-react/*.njsproj
+sandbox-service-react/*.sln
+sandbox-service-react/*.sw?
 
 
 frontend/node_modules
